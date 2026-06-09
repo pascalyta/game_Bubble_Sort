@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bubble Sort Puzzle Premium Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Fredoka & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            transition: background 0.8s ease, color 0.5s ease;
+        }
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Efek Glassmorphism Premium */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-btn {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .glass-btn:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .glass-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        /* Latar Belakang Gelembung Melayang */
+        .ambient-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 70%, rgba(255,255,255,0) 100%);
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.03), inset 5px 5px 15px rgba(255,255,255,0.18);
+            animation: floatSlowly 18s infinite ease-in-out;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes floatSlowly {
+            0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+            50% { transform: translateY(-80px) scale(1.15) rotate(180deg); }
+        }
+
+        /* Animasi Transisi Pencapaian */
+        .achievement-popup {
+            animation: slideInDown 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
+                       slideOutUp 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 3.5s forwards;
+        }
+
+        @keyframes slideInDown {
+            0% { transform: translate(-50%, -120px); opacity: 0; }
+            100% { transform: translate(-50%, 24px); opacity: 1; }
+        }
+        @keyframes slideOutUp {
+            0% { transform: translate(-50%, 24px); opacity: 1; }
+            100% { transform: translate(-50%, -120px); opacity: 0; }
+        }
+
+        /* Animasi Guncangan saat Salah */
+        .shake-element {
+            animation: shake 0.35s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            15%, 55%, 85% { transform: translateX(-8px); }
+            35%, 75% { transform: translateX(8px); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-tr from-slate-950 via-indigo-955 to-slate-900 min-h-screen flex flex-col items-center justify-between overflow-hidden text-white relative p-3 sm:p-5">
+
+    <!-- Wadah Efek Latar Belakang -->
+    <div id="ambient-container" class="absolute inset-0 overflow-hidden z-0 pointer-events-none">
+        <div class="ambient-bubble w-44 h-44 top-[8%] left-[4%]" style="animation-delay: 0s; animation-duration: 20s;"></div>
+        <div class="ambient-bubble w-60 h-60 bottom-[12%] right-[2%]" style="animation-delay: 2s; animation-duration: 25s;"></div>
+        <div class="ambient-bubble w-28 h-28 top-[45%] right-[8%]" style="animation-delay: 5s; animation-duration: 16s;"></div>
+        <div class="ambient-bubble w-36 h-36 bottom-[35%] left-[6%]" style="animation-delay: 1.5s; animation-duration: 18s;"></div>
+    </div>
+
+    <!-- PANEL UTAMA PERMAINAN -->
+    <div class="w-full max-w-md flex-1 flex flex-col justify-between z-10 gap-2 sm:gap-4">
+        
+        <!-- HEADER / PUSAT NAVIGASI -->
+        <header class="flex items-center justify-between glass-panel p-3 rounded-2xl border border-white/10 shadow-lg">
+            <div class="flex items-center gap-2">
+                <span class="text-3xl animate-bounce" style="animation-duration: 2.5s;">🧪</span>
+                <div>
+                    <h1 class="text-base sm:text-xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-yellow-200 to-pink-300 uppercase leading-none">BUBBLE SORT</h1>
+                    <p class="text-[9px] text-teal-300 uppercase font-inter font-bold tracking-widest mt-0.5">Premium Deluxe</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-1.5">
+                <button id="btn-theme-menu" class="glass-btn w-9 h-9 rounded-xl flex items-center justify-center" title="Ubah Tema">
+                    <i class="fa-solid fa-palette text-sm text-yellow-300"></i>
+                </button>
+                <button id="btn-sound-toggle" class="glass-btn w-9 h-9 rounded-xl flex items-center justify-center" title="Efek Suara">
+                    <i id="sound-icon" class="fa-solid fa-volume-high text-sm"></i>
+                </button>
+                <button id="btn-music-toggle" class="glass-btn w-9 h-9 rounded-xl flex items-center justify-center" title="Musik Latar">
+                    <i id="music-icon" class="fa-solid fa-music text-sm opacity-55"></i>
+                </button>
+                <button id="btn-achievements" class="glass-btn w-9 h-9 rounded-xl flex items-center justify-center" title="Prestasi">
+                    <i class="fa-solid fa-trophy text-sm text-amber-400"></i>
+                </button>
+                <button id="btn-help" class="glass-btn w-9 h-9 rounded-xl flex items-center justify-center" title="Aturan Main">
+                    <i class="fa-solid fa-question text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- PANEL STATISTIK REAL-TIME -->
+        <div class="grid grid-cols-4 gap-2">
+            <div class="glass-panel p-2 rounded-2xl border border-white/10 text-center flex flex-col justify-center shadow">
+                <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">LEVEL</span>
+                <span id="stat-level" class="text-lg font-bold text-yellow-300">1</span>
+            </div>
+            <div class="glass-panel p-2 rounded-2xl border border-white/10 text-center flex flex-col justify-center shadow">
+                <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">SKOR</span>
+                <span id="stat-score" class="text-lg font-bold text-pink-300">0</span>
+            </div>
+            <div class="glass-panel p-2 rounded-2xl border border-white/10 text-center flex flex-col justify-center shadow">
+                <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">LANGKAH</span>
+                <span id="stat-moves" class="text-lg font-bold text-emerald-300">0</span>
+            </div>
+            <div class="glass-panel p-2 rounded-2xl border border-white/10 text-center flex flex-col justify-center shadow">
+                <span class="text-[9px] uppercase font-bold text-slate-300 tracking-wider">TERBAIK</span>
+                <span id="stat-best" class="text-lg font-bold text-teal-300">-</span>
+            </div>
+        </div>
+
+        <!-- AREA UTAMA RENDERING CANVAS -->
+        <div id="board-container" class="glass-panel rounded-3xl p-4 border border-white/15 shadow-2xl flex-1 flex flex-col justify-center items-center relative overflow-hidden min-h-[350px]">
+            <!-- Engine utama Canvas -->
+            <canvas id="game-canvas" class="w-full h-full block touch-none"></canvas>
+            
+            <!-- Panduan Melayang -->
+            <div id="tap-helper" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-center pointer-events-none text-xs text-white/40 tracking-wider uppercase font-inter animate-pulse">
+                Ketuk tabung untuk memilih gelembung
+            </div>
+        </div>
+
+        <!-- TOMBOL KENDALI UTAMA -->
+        <div class="grid grid-cols-3 gap-3">
+            <button id="btn-undo" class="bg-gradient-to-b from-sky-500 to-indigo-600 hover:brightness-110 disabled:from-slate-800 disabled:to-slate-900 disabled:text-slate-500 disabled:opacity-40 text-white font-bold py-3.5 px-4 rounded-2xl border-b-4 border-indigo-800 shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center gap-0.5 text-xs">
+                <i class="fa-solid fa-rotate-left text-base"></i>
+                <span>Batal (Undo)</span>
+            </button>
+            <button id="btn-reset" class="bg-gradient-to-b from-amber-500 to-orange-600 hover:brightness-110 text-white font-bold py-3.5 px-4 rounded-2xl border-b-4 border-orange-800 shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center gap-0.5 text-xs">
+                <i class="fa-solid fa-arrow-rotate-right text-base"></i>
+                <span>Ulangi (Reset)</span>
+            </button>
+            <button id="btn-add-tube" class="bg-gradient-to-b from-emerald-500 to-teal-600 hover:brightness-110 disabled:from-slate-800 disabled:to-slate-900 disabled:text-slate-500 disabled:opacity-40 text-white font-bold py-3.5 px-4 rounded-2xl border-b-4 border-teal-800 shadow-lg active:scale-95 transition-all flex flex-col items-center justify-center gap-0.5 text-xs">
+                <i class="fa-solid fa-circle-plus text-base"></i>
+                <span>+1 Tabung</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- MONITOR/LAYAR UTAMA PENYAMBUT (WELCOME SCREEN) -->
+    <div id="screen-welcome" class="fixed inset-0 bg-gradient-to-b from-slate-950 via-indigo-950 to-teal-950 z-50 flex flex-col items-center justify-center p-6 text-center">
+        <div class="absolute inset-0 overflow-hidden z-0 pointer-events-none opacity-20">
+            <div class="ambient-bubble w-72 h-72 top-[5%] left-[-10%]"></div>
+            <div class="ambient-bubble w-96 h-96 bottom-[-5%] right-[-10%]"></div>
+        </div>
+
+        <div class="z-10 max-w-sm w-full flex flex-col items-center gap-6">
+            <!-- Logo Visual Dekoratif Gelembung Tabung -->
+            <div class="flex gap-4 items-end mb-2">
+                <div class="w-12 h-32 bg-white/5 rounded-full border-2 border-white/20 flex flex-col justify-end p-2 gap-1.5 items-center pb-4">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-rose-700 shadow-lg"></div>
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-pink-500 to-rose-700 shadow-lg"></div>
+                </div>
+                <div class="w-12 h-36 bg-white/10 rounded-full border-2 border-yellow-400/40 flex flex-col justify-end p-2 gap-1.5 items-center pb-4 transform -translate-y-4 shadow-2xl">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-amber-600 shadow-lg"></div>
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-amber-600 shadow-lg"></div>
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-amber-600 shadow-lg animate-bounce"></div>
+                </div>
+                <div class="w-12 h-32 bg-white/5 rounded-full border-2 border-white/20 flex flex-col justify-end p-2 gap-1.5 items-center pb-4">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-600 shadow-lg"></div>
+                </div>
+            </div>
+
+            <div>
+                <h1 class="text-4xl sm:text-5xl font-extrabold tracking-wider drop-shadow-[0_5px_15px_rgba(0,0,0,0.5)] text-transparent bg-clip-text bg-gradient-to-r from-teal-300 via-yellow-200 to-pink-300 uppercase leading-tight">
+                    BUBBLE SORT
+                </h1>
+                <p class="text-[10px] text-teal-300 uppercase font-inter font-bold tracking-[0.2em] mt-1">Premium Deluxe</p>
+            </div>
+            
+            <p class="text-slate-300 text-xs sm:text-sm leading-relaxed px-4">
+                Pindahkan dan kelompokkan gelembung cairan jelly estetis ke dalam tabung yang sama. Rasakan sensasi fisika gelembung yang super kenyal!
+            </p>
+
+            <!-- Panel Pemilihan Level Awal -->
+            <div class="w-full bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-xl">
+                <span class="text-xs uppercase font-bold text-slate-400 tracking-wider block mb-2">Pilih Level Mulai</span>
+                <div class="flex justify-center items-center gap-5">
+                    <button id="btn-welcome-dec" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/15 transition active:scale-90 text-yellow-300"><i class="fa-solid fa-chevron-left text-lg"></i></button>
+                    <span id="welcome-level-display" class="text-3xl font-extrabold text-yellow-300 w-16">1</span>
+                    <button id="btn-welcome-inc" class="w-11 h-11 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center border border-white/15 transition active:scale-90 text-yellow-300"><i class="fa-solid fa-chevron-right text-lg"></i></button>
+                </div>
+            </div>
+
+            <button id="btn-play" class="w-full bg-gradient-to-r from-teal-400 via-emerald-400 to-emerald-500 hover:from-teal-300 hover:to-emerald-400 text-slate-950 font-extrabold py-4 px-10 rounded-2xl shadow-[0_10px_30px_rgba(16,185,129,0.3)] transform hover:scale-[1.03] active:scale-95 transition-all text-base border-b-4 border-emerald-700 tracking-wide uppercase">
+                <i class="fa-solid fa-play mr-2"></i> Mulai Bermain
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL PEMILIHAN TEMA -->
+    <div id="modal-themes" class="fixed inset-0 bg-black/80 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
+        <div class="bg-slate-900 border border-white/15 rounded-3xl p-5 w-full max-w-xs shadow-2xl flex flex-col gap-4">
+            <h3 class="text-lg font-bold text-yellow-300 flex items-center justify-center gap-2"><i class="fa-solid fa-palette"></i> Pilih Tema Visual</h3>
+            
+            <div class="flex flex-col gap-2.5">
+                <button data-theme="lab" class="theme-option-btn w-full bg-white/5 border border-white/25 rounded-xl p-3 flex items-center gap-3 text-left transition-all hover:bg-white/10">
+                    <span class="text-2xl">🔮</span>
+                    <div>
+                        <div class="font-bold text-sm">Laboratorium Alchemist</div>
+                        <div class="text-[10px] text-slate-400">Klasik, tabung reaksi berkilau mistis.</div>
+                    </div>
+                </button>
+                <button data-theme="cyber" class="theme-option-btn w-full bg-white/5 border border-white/10 rounded-xl p-3 flex items-center gap-3 text-left transition-all hover:bg-white/10">
+                    <span class="text-2xl">⚡</span>
+                    <div>
+                        <div class="font-bold text-sm">Neon Cyberpunk</div>
+                        <div class="text-[10px] text-slate-400">Futuristik neon retro dengan efek pendar.</div>
+                    </div>
+                </button>
+                <button data-theme="ocean" class="theme-option-btn w-full bg-white/5 border border-white/10 rounded-xl p-3 flex items-center gap-3 text-left transition-all hover:bg-white/10">
+                    <span class="text-2xl">🐠</span>
+                    <div>
+                        <div class="font-bold text-sm">Kedalaman Samudra</div>
+                        <div class="text-[10px] text-slate-400">Bawah laut yang sejuk, penuh buih karang.</div>
+                    </div>
+                </button>
+            </div>
+
+            <button id="btn-close-themes" class="w-full bg-white/10 hover:bg-white/15 border border-white/15 py-2.5 rounded-xl text-xs font-bold transition">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL DAFTAR PRESTASI (ACHIEVEMENTS) -->
+    <div id="modal-achievements" class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
+        <div class="bg-slate-900 border border-white/15 rounded-3xl p-5 w-full max-w-sm shadow-2xl flex flex-col gap-4 max-h-[80vh]">
+            <h3 class="text-lg font-bold text-amber-400 flex items-center justify-center gap-2"><i class="fa-solid fa-trophy"></i> Prestasi Kamu</h3>
+            
+            <!-- Daftar Dinamis -->
+            <div id="achievements-list" class="flex flex-col gap-2 overflow-y-auto pr-1 flex-1 text-left max-h-[50vh]">
+                <!-- Item disuntik via JS -->
+            </div>
+
+            <button id="btn-close-achievements" class="w-full bg-white/10 hover:bg-white/15 border border-white/15 py-2.5 rounded-xl text-xs font-bold transition">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL CARA BERMAIN (GUIDE) -->
+    <div id="modal-guide" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex-col items-center justify-center p-4 text-left">
+        <div class="bg-slate-900 border border-white/15 rounded-3xl p-5 w-full max-w-xs shadow-2xl flex flex-col gap-4">
+            <h3 class="text-base font-bold text-yellow-300 text-center flex items-center justify-center gap-2">
+                <i class="fa-solid fa-circle-info"></i> ATURAN MAIN
+            </h3>
+            
+            <div class="space-y-3 text-xs leading-relaxed text-slate-300 font-inter">
+                <div class="flex items-start gap-2">
+                    <div class="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-slate-950 font-bold flex-shrink-0 text-[10px]">1</div>
+                    <p>Ketuk <strong class="text-white font-semibold">Tabung</strong> untuk memilih gelembung teratas.</p>
+                </div>
+                <div class="flex items-start gap-2">
+                    <div class="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-slate-950 font-bold flex-shrink-0 text-[10px]">2</div>
+                    <p>Ketuk tabung tujuan untuk memindahkan gelembung tersebut.</p>
+                </div>
+                <div class="flex items-start gap-2">
+                    <div class="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-slate-950 font-bold flex-shrink-0 text-[10px]">3</div>
+                    <p class="text-amber-200">
+                        Gelembung hanya bisa diletakkan di atas gelembung <strong class="text-white">berwarna sama</strong> atau ke dalam <strong class="text-white">tabung kosong</strong>.
+                    </p>
+                </div>
+                <div class="flex items-start gap-2">
+                    <div class="w-5 h-5 rounded-full bg-teal-500 flex items-center justify-center text-slate-950 font-bold flex-shrink-0 text-[10px]">4</div>
+                    <p>Satu tabung hanya bisa menampung maksimal <strong class="text-white">4 Gelembung</strong>.</p>
+                </div>
+            </div>
+
+            <button id="btn-close-guide" class="w-full bg-gradient-to-r from-teal-400 to-emerald-500 text-slate-950 font-extrabold py-3 rounded-xl hover:brightness-110 active:scale-95 transition text-xs uppercase">
+                Mengerti & Mainkan!
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL VICTORY (LEVEL SELESAI) -->
+    <div id="screen-win" class="fixed inset-0 bg-black/85 backdrop-blur-md z-40 hidden flex-col items-center justify-center p-6 text-center">
+        <div class="bg-slate-900 border border-white/20 rounded-3xl p-6 w-full max-w-xs shadow-2xl flex flex-col items-center gap-4 relative">
+            <div class="text-6xl animate-bounce">🏆</div>
+            <div>
+                <h3 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500 uppercase tracking-wider leading-none">LEVEL SELESAI!</h3>
+                <p class="text-[10px] text-slate-400 mt-2">Diselesaikan dalam <span id="win-moves-info" class="font-bold text-yellow-300 text-xs">0</span> langkah!</p>
+            </div>
+
+            <!-- Bintang Kepuasan -->
+            <div id="win-stars-container" class="flex gap-1 text-2xl text-yellow-400 justify-center my-1">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+            </div>
+
+            <!-- Ringkasan Statistik -->
+            <div class="w-full bg-white/5 border border-white/10 rounded-2xl p-3 flex flex-col gap-1.5 text-xs font-inter">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Total Skor:</span>
+                    <span id="win-score" class="font-bold text-pink-300">100</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Level Berikutnya:</span>
+                    <span id="win-lvl" class="font-bold text-teal-300">2</span>
+                </div>
+            </div>
+
+            <!-- Kendali Menu -->
+            <div class="flex flex-col gap-2 w-full mt-2">
+                <button id="btn-next-level" class="w-full bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-extrabold py-3 rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition text-xs uppercase tracking-wider">
+                    Lanjut Level <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+                <button id="btn-win-restart" class="w-full bg-white/10 hover:bg-white/15 text-white border border-white/20 font-bold py-2.5 rounded-xl transition active:scale-95 text-xs">
+                    <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Level Ini
+                </button>
+                <button id="btn-win-home" class="w-full bg-transparent hover:bg-white/5 text-slate-400 hover:text-white font-semibold py-2 rounded-xl transition active:scale-95 text-xs">
+                    <i class="fa-solid fa-house mr-1"></i> Menu Utama
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFIKASI TOAST CUSTOM -->
+    <div id="custom-toast" class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900/95 border border-red-500/40 text-red-300 text-xs py-2.5 px-4 rounded-xl shadow-xl z-50 flex items-center gap-2 pointer-events-none font-semibold transition-all duration-300 opacity-0 translate-y-10">
+        <i class="fa-solid fa-circle-exclamation text-red-400"></i>
+        <span id="toast-message">Pemberitahuan</span>
+    </div>
+
+    <!-- NOTIFIKASI POPUP PRESTASI SECARA LIVE -->
+    <div id="achievement-alert" class="achievement-popup fixed top-[-100px] left-1/2 -translate-x-1/2 w-72 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border-2 border-amber-400 rounded-2xl shadow-2xl p-3 z-50 flex items-center gap-3 pointer-events-none hidden">
+        <div class="w-10 h-10 rounded-xl bg-amber-400/20 flex items-center justify-center text-xl text-amber-400"><i class="fa-solid fa-medal animate-bounce"></i></div>
+        <div class="text-left flex-1">
+            <div class="text-[9px] uppercase font-bold text-amber-400 tracking-wider">Prestasi Terbuka!</div>
+            <div id="achievement-alert-title" class="text-xs font-bold text-white truncate">Gelar Kehormatan</div>
+            <div id="achievement-alert-desc" class="text-[9px] text-slate-400 truncate">Deskripsi prestasi</div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="text-[9px] text-slate-500 text-center font-inter mt-1.5 z-10">
+        Super Bubble Sort Premium Deluxe &copy; 2026. Didesain dengan Kepuasan Fisika Cairan Maksimal.
+    </footer>
+
+    <!-- LOGIKA UTAMA & MESIN AUDIO SINTETIS -->
+    <script>
+        // Manajemen Audio Sintetis (Web Audio API)
+        let audioCtx = null;
+        let isSoundMuted = false;
+        let isMusicMuted = true;
+        
+        let ambientMusicInterval = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSound(type) {
+            if (isSoundMuted) return;
+            try {
+                initAudio();
+                const now = audioCtx.currentTime;
+
+                if (type === 'select') {
+                    // Suara menarik gelembung (pop lembut meningkat)
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(280, now);
+                    osc.frequency.exponentialRampToValueAtTime(650, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } 
+                else if (type === 'drop') {
+                    // Suara gelembung jatuh menabrak air/gelembung lain (bloop basah)
+                    const osc = audioCtx.createOscillator();
+                    const osc2 = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(120, now + 0.15);
+                    
+                    osc2.type = 'triangle';
+                    osc2.frequency.setValueAtTime(200, now);
+                    osc2.frequency.exponentialRampToValueAtTime(80, now + 0.15);
+                    
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    
+                    osc.start(now);
+                    osc2.start(now);
+                    osc.stop(now + 0.15);
+                    osc2.stop(now + 0.15);
+                } 
+                else if (type === 'error') {
+                    // Buzz frekuensi rendah elastis
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(110, now);
+                    osc.frequency.linearRampToValueAtTime(70, now + 0.2);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } 
+                else if (type === 'victory') {
+                    // Arpeggio penyelesaian level yang megah
+                    const chord = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50]; // Harmoni C Mayor
+                    chord.forEach((freq, i) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + (i * 0.06));
+                        gain.gain.setValueAtTime(0.08, now + (i * 0.06));
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.06) + 0.5);
+                        osc.start(now + (i * 0.06));
+                        osc.stop(now + (i * 0.06) + 0.55);
+                    });
+                }
+            } catch (err) {
+                console.warn("Audio synthesizer error:", err);
+            }
+        }
+
+        function startAmbientMusic() {
+            if (isMusicMuted) return;
+            initAudio();
+            
+            // Progresi akor meditasi menenangkan (Pentatonic)
+            const chords = [
+                [220.00, 277.18, 329.63, 440.00], // A Major
+                [246.94, 293.66, 369.99, 493.88], // B Minor
+                [196.00, 246.94, 293.66, 392.00]  // G Major
+            ];
+            let chordIdx = 0;
+
+            if (ambientMusicInterval) clearInterval(ambientMusicInterval);
+
+            ambientMusicInterval = setInterval(() => {
+                if (isMusicMuted || !audioCtx) return;
+                const now = audioCtx.currentTime;
+                const currentChord = chords[chordIdx];
+                chordIdx = (chordIdx + 1) % chords.length;
+
+                currentChord.forEach((noteFreq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(noteFreq, now + (i * 0.3));
+                    
+                    // Efek fading lambat agar santai
+                    gain.gain.setValueAtTime(0, now + (i * 0.3));
+                    gain.gain.linearRampToValueAtTime(0.015, now + (i * 0.3) + 1.2);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.3) + 3.5);
+                    
+                    osc.start(now + (i * 0.3));
+                    osc.stop(now + (i * 0.3) + 3.7);
+                });
+            }, 4500);
+        }
+
+        function stopAmbientMusic() {
+            if (ambientMusicInterval) {
+                clearInterval(ambientMusicInterval);
+                ambientMusicInterval = null;
+            }
+        }
+    </script>
+
+    <!-- SISTEM PRESTASI & PENYIMPANAN DATA SIKLUS HIDUP -->
+    <script>
+        const ACHIEVEMENTS_DB = {
+            FIRST_WIN: { title: "Sortir Perdana", desc: "Berhasil menyelesaikan 1 level", icon: "⭐", unlocked: false },
+            SPEED_RUN: { title: "Penyortir Kilat", desc: "Menang di bawah 12 langkah", icon: "⚡", unlocked: false },
+            NO_UNDO: { title: "Fokus Sempurna", desc: "Selesaikan level tanpa menekan Undo", icon: "🧠", unlocked: false },
+            LEVEL_10: { title: "Master Alchemist", desc: "Mencapai Level 10 permainan", icon: "🏆", unlocked: false },
+            THEME_EXPLORER: { title: "Kurator Seni", desc: "Mengganti tema visual permainan", icon: "🎨", unlocked: false }
+        };
+
+        let userStats = JSON.parse(localStorage.getItem('bubble_sort_premium_stats')) || {
+            unlockedAchievements: [],
+            undoUsedThisLevel: false,
+            score: 0,
+            levelsWon: 0,
+            totalMovesCount: 0
+        };
+
+        function saveStats() {
+            localStorage.setItem('bubble_sort_premium_stats', JSON.stringify(userStats));
+        }
+
+        function unlockAchievement(id) {
+            if (userStats.unlockedAchievements.includes(id)) return;
+            userStats.unlockedAchievements.push(id);
+            saveStats();
+
+            // Tampilkan alert visual dinamis
+            const alertBox = document.getElementById('achievement-alert');
+            document.getElementById('achievement-alert-title').innerText = ACHIEVEMENTS_DB[id].title;
+            document.getElementById('achievement-alert-desc').innerText = ACHIEVEMENTS_DB[id].desc;
+            
+            alertBox.classList.remove('hidden');
+            playSound('victory');
+            setTimeout(() => {
+                alertBox.classList.add('hidden');
+            }, 4000);
+        }
+
+        function renderAchievementsList() {
+            const list = document.getElementById('achievements-list');
+            list.innerHTML = '';
+            
+            Object.keys(ACHIEVEMENTS_DB).forEach(key => {
+                const isUnlocked = userStats.unlockedAchievements.includes(key);
+                const a = ACHIEVEMENTS_DB[key];
+                
+                list.innerHTML += `
+                    <div class="glass-panel p-3 rounded-2xl border border-white/10 flex items-center gap-3 ${isUnlocked ? 'opacity-100 bg-emerald-500/5 border-emerald-500/30' : 'opacity-40'}">
+                        <div class="text-3xl">${a.icon}</div>
+                        <div class="flex-1">
+                            <div class="text-xs font-bold ${isUnlocked ? 'text-amber-400' : 'text-slate-400'}">${a.title}</div>
+                            <div class="text-[9px] text-slate-300 mt-0.5">${a.desc}</div>
+                        </div>
+                        <div class="text-xs font-bold text-emerald-400">${isUnlocked ? 'TERBUKA' : 'TERKUNCI'}</div>
+                    </div>
+                `;
+            });
+        }
+    </script>
+
+    <!-- KODE ENGINE GRAFIS CANVAS & SETUP TEMA -->
+    <script>
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Atribut Tema
+        const THEMES = {
+            lab: {
+                bg: 'radial-gradient(circle at center, #111827 0%, #030712 100%)',
+                tubeStroke: 'rgba(255, 255, 255, 0.22)',
+                tubeGlow: 'rgba(20, 184, 166, 0.08)',
+                tubeSelected: 'rgba(234, 179, 8, 0.75)',
+                bubbleGlint: true,
+                underseaBubbles: false
+            },
+            cyber: {
+                bg: 'radial-gradient(circle at center, #090514 0%, #020105 100%)',
+                tubeStroke: 'rgba(6, 182, 212, 0.35)',
+                tubeGlow: 'rgba(6, 182, 212, 0.12)',
+                tubeSelected: 'rgba(244, 63, 94, 0.85)',
+                bubbleGlint: false,
+                underseaBubbles: false
+            },
+            ocean: {
+                bg: 'radial-gradient(circle at center, #032b45 0%, #010f1a 100%)',
+                tubeStroke: 'rgba(255, 255, 255, 0.25)',
+                tubeGlow: 'rgba(14, 165, 233, 0.12)',
+                tubeSelected: 'rgba(52, 211, 153, 0.75)',
+                bubbleGlint: true,
+                underseaBubbles: true
+            }
+        };
+
+        let currentThemeKey = 'lab';
+
+        // Palet Warna Gelembung (Glossy Jelly Glow)
+        const BALL_COLORS = {
+            1: { main: '#f43f5e', dark: '#be123c', glow: 'rgba(244,63,94,0.35)', specular: '#ffe4e6' },    // Mawar Merah
+            2: { main: '#14b8a6', dark: '#0f766e', glow: 'rgba(20,184,166,0.35)', specular: '#ccfbf1' },   // Hijau Toska
+            3: { main: '#eab308', dark: '#a16207', glow: 'rgba(234,179,8,0.35)', specular: '#fef9c3' },    // Emas Kuning
+            4: { main: '#6366f1', dark: '#4338ca', glow: 'rgba(99,102,241,0.35)', specular: '#e0e7ff' },   // Indigo Biru
+            5: { main: '#10b981', dark: '#047857', glow: 'rgba(16,185,129,0.35)', specular: '#d1fae5' },   // Hijau Zamrud
+            6: { main: '#ec4899', dark: '#be185d', glow: 'rgba(236,72,153,0.35)', specular: '#fce7f3' },   // Merah Muda
+            7: { main: '#f97316', dark: '#c2410c', glow: 'rgba(249,115,22,0.35)', specular: '#ffedd5' },   // Jingga Oranye
+            8: { main: '#06b6d4', dark: '#0e7490', glow: 'rgba(6,182,212,0.35)', specular: '#ecfeff' }    // Cyan Elektrik
+        };
+
+        const CAPACITY = 4;
+        let tubes = [];
+        let selectedIdx = null;
+        let originalStartingTubes = [];
+        
+        let gameScore = 0;
+        let currentLevel = 1;
+        let movesCount = 0;
+        let bestScorePerLevel = JSON.parse(localStorage.getItem('bubble_sort_premium_bests')) || {};
+        
+        let moveHistory = [];
+        let isComplete = false;
+        let extraTubeAdded = false;
+
+        // Wadah Animasi & Partikel Fisika
+        let particlesPool = [];
+        let animatingBalls = []; 
+        let oceanBackgroundBubbles = [];
+        let computedTubesCoordinates = []; 
+        
+        // Manajemen Keadaan Jelly Gelembung (Skala Osilasi)
+        let ballJellyStates = {}; // Menyimpan data goyangan `{tubeIdx}_{ballIdx}` -> {scaleX, scaleY, speedX, speedY, angle}
+
+        function makeOceanBubble() {
+            return {
+                x: Math.random() * canvas.width,
+                y: canvas.height + 20,
+                r: Math.random() * 3 + 1,
+                vy: Math.random() * 0.7 + 0.3,
+                wobble: Math.random() * 2 * Math.PI,
+                wStep: Math.random() * 0.04 + 0.01
+            };
+        }
+
+        function spawnParticleSplash(x, y, color) {
+            for (let i = 0; i < 15; i++) {
+                particlesPool.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 5,
+                    vy: (Math.random() - 0.5) * 5 - 2,
+                    color: color,
+                    r: Math.random() * 3.5 + 1,
+                    alpha: 1.0,
+                    decay: Math.random() * 0.03 + 0.02
+                });
+            }
+        }
+    </script>
+
+    <!-- ALGORITMA PENYUSUNAN LEVEL YANG DIJAMIN SOLVABLE (PASTI BISA SELESAI) -->
+    <script>
+        function buildSolvableLevel(level) {
+            let colorCount = 2;
+            let emptyTubesCount = 1;
+
+            if (level >= 2) colorCount = 3;
+            if (level >= 4) { colorCount = 4; emptyTubesCount = 2; }
+            if (level >= 7) colorCount = 5;
+            if (level >= 10) colorCount = 6;
+            if (level >= 14) colorCount = 7;
+            if (level >= 18) colorCount = 8;
+
+            colorCount = Math.min(colorCount, 8); // Batasi warna maksimal ke data warna yang ada (8)
+
+            // Buat keadaan selesai/sempurna terlebih dahulu
+            let state = [];
+            for (let i = 1; i <= colorCount; i++) {
+                state.push([i, i, i, i]);
+            }
+            for (let i = 0; i < emptyTubesCount; i++) {
+                state.push([]);
+            }
+
+            // Lakukan simulasi langkah terbalik (backward scrambler) secara masif
+            let scramblesCount = colorCount * 30;
+            let safetyCount = 0;
+            let stepPerformed = 0;
+
+            while (stepPerformed < scramblesCount && safetyCount < 3000) {
+                safetyCount++;
+                const fromIdx = Math.floor(Math.random() * state.length);
+                if (state[fromIdx].length === 0) continue;
+
+                const toIdx = Math.floor(Math.random() * state.length);
+                if (fromIdx === toIdx) continue;
+                if (state[toIdx].length >= CAPACITY) continue;
+
+                // Batasan logis pemindahan terbalik agar tidak menghasilkan pola tumpukan monoton
+                const ball = state[fromIdx].pop();
+                state[toIdx].push(ball);
+                stepPerformed++;
+            }
+
+            // Jika secara tidak sengaja hasil acakan langsung berstatus selesai, acak ulang
+            if (verifyBoardSolved(state)) {
+                return buildSolvableLevel(level);
+            }
+
+            return state;
+        }
+
+        function verifyBoardSolved(boardState) {
+            for (let i = 0; i < boardState.length; i++) {
+                const tube = boardState[i];
+                if (tube.length === 0) continue;
+                if (tube.length < CAPACITY) return false;
+                const matchVal = tube[0];
+                for (let j = 1; j < tube.length; j++) {
+                    if (tube[j] !== matchVal) return false;
+                }
+            }
+            return true;
+        }
+    </script>
+
+    <!-- ENGINE UTAMA GRAFIS & METRIK POSISI KANVAS -->
+    <script>
+        function handleCanvasScaling() {
+            const container = document.getElementById('board-container');
+            const dpr = window.devicePixelRatio || 1;
+            
+            // Atur pixel dimensi internal canvas demi performa layar HD tinggi
+            canvas.width = container.clientWidth * dpr;
+            canvas.height = container.clientHeight * dpr;
+            
+            ctx.scale(dpr, dpr);
+            layoutTubesGrid();
+        }
+
+        function layoutTubesGrid() {
+            const container = document.getElementById('board-container');
+            const cw = container.clientWidth;
+            const ch = container.clientHeight;
+
+            computedTubesCoordinates = [];
+            const tubesCount = tubes.length;
+
+            let columns = tubesCount;
+            let rows = 1;
+            
+            if (tubesCount >= 6) {
+                columns = Math.ceil(tubesCount / 2);
+                rows = 2;
+            }
+
+            // Skala ukuran tabung disesuaikan secara proporsional demi efektivitas sentuhan jari
+            const tubeWidth = Math.min(46, Math.floor(cw / (columns + 0.8)));
+            const tubeHeight = Math.min(140, Math.floor((ch - 50) / rows));
+
+            const horizontalGap = (cw - (columns * tubeWidth)) / (columns + 1);
+            const verticalGap = (ch - (rows * tubeHeight)) / (rows + 1);
+
+            for (let i = 0; i < tubesCount; i++) {
+                let row = 0;
+                let col = i;
+                if (rows > 1 && i >= columns) {
+                    row = 1;
+                    col = i - columns;
+                }
+
+                const x = horizontalGap + col * (tubeWidth + horizontalGap);
+                const y = verticalGap + row * (tubeHeight + verticalGap) + 12;
+
+                computedTubesCoordinates.push({
+                    x: x,
+                    y: y,
+                    width: tubeWidth,
+                    height: tubeHeight,
+                    ballRadius: tubeWidth * 0.41
+                });
+            }
+        }
+
+        // Fungsi menggambar tabung gelas reaksi dengan mulut/bibir tabung (rim) 3D
+        function drawRoundedTube(context, x, y, width, height, radius) {
+            context.beginPath();
+            // Bibir tabung kiri membulat sedikit keluar
+            context.moveTo(x - 2, y);
+            context.lineTo(x + width + 2, y);
+            context.lineTo(x + width, y + 4); // Transisi mengecil ke leher
+            context.lineTo(x + width, y + height - radius);
+            context.arcTo(x + width, y + height, x + width - radius, y + height, radius);
+            context.arcTo(x, y + height, x, y + height - radius, radius);
+            context.lineTo(x, y + 4);
+            context.closePath();
+        }
+
+        // Render Frame Loop Utama
+        function updatePhysicsAndRender() {
+            const activeTheme = THEMES[currentThemeKey];
+            
+            // Bersihkan frame sebelumnya
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 1. Gambar latar belakang interaktif (Samudra jika aktif)
+            if (activeTheme.underseaBubbles) {
+                if (oceanBackgroundBubbles.length < 35 && Math.random() < 0.06) {
+                    oceanBackgroundBubbles.push(makeOceanBubble());
+                }
+                
+                for (let i = oceanBackgroundBubbles.length - 1; i >= 0; i--) {
+                    const ob = oceanBackgroundBubbles[i];
+                    ob.y -= ob.vy;
+                    ob.wobble += ob.wStep;
+                    const animX = ob.x + Math.sin(ob.wobble) * 5;
+
+                    ctx.beginPath();
+                    ctx.arc(animX, ob.y, ob.r, 0, 2 * Math.PI);
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.lineWidth = 0.5;
+                    ctx.fill();
+                    ctx.stroke();
+
+                    if (ob.y < -20) oceanBackgroundBubbles.splice(i, 1);
+                }
+            }
+
+            // 2. Render Tabung Reaksi Gelas
+            tubes.forEach((tube, tubeIdx) => {
+                const geom = computedTubesCoordinates[tubeIdx];
+                if (!geom) return;
+
+                const isSelected = (selectedIdx === tubeIdx);
+                
+                // Pendaran cahaya tabung saat dipilih
+                ctx.save();
+                ctx.shadowBlur = isSelected ? 18 : 3;
+                ctx.shadowColor = isSelected ? activeTheme.tubeSelected : activeTheme.tubeGlow;
+
+                ctx.strokeStyle = isSelected ? activeTheme.tubeSelected : activeTheme.tubeStroke;
+                ctx.lineWidth = isSelected ? 3.5 : 1.5;
+
+                // Gradasi kaca transparan
+                const glassGrad = ctx.createLinearGradient(geom.x, geom.y, geom.x + geom.width, geom.y);
+                glassGrad.addColorStop(0, 'rgba(255, 255, 255, 0.12)');
+                glassGrad.addColorStop(0.25, 'rgba(255, 255, 255, 0.04)');
+                glassGrad.addColorStop(0.75, 'rgba(0, 0, 0, 0.2)');
+                glassGrad.addColorStop(1, 'rgba(255, 255, 255, 0.08)');
+                ctx.fillStyle = glassGrad;
+
+                drawRoundedTube(ctx, geom.x, geom.y, geom.width, geom.height, geom.width / 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+
+                // Garis rim horizontal atas tabung
+                ctx.beginPath();
+                ctx.ellipse(geom.x + geom.width/2, geom.y, geom.width/2 + 2, 3, 0, 0, 2 * Math.PI);
+                ctx.fillStyle = isSelected ? activeTheme.tubeSelected : 'rgba(255, 255, 255, 0.2)';
+                ctx.fill();
+
+                // 3. Render Gelembung Cairan di dalam Tabung
+                tube.forEach((ballId, bIdx) => {
+                    // Jangan gambar gelembung jika gelembung tersebut sedang dalam proses penerbangan animasi
+                    const isTransitioning = animatingBalls.some(ab => ab.sourceTubeIdx === tubeIdx && ab.ballLocalIdx === bIdx);
+                    if (isTransitioning) return;
+
+                    let targetX = geom.x + geom.width / 2;
+                    let targetY = geom.y + geom.height - (bIdx * geom.ballRadius * 2.05) - geom.ballRadius - 6;
+
+                    // Gelembung teratas melayang jika tabung dipilih
+                    const isTopAndSelected = isSelected && (bIdx === tube.length - 1);
+                    if (isTopAndSelected) {
+                        targetY = geom.y - geom.ballRadius - 16 + Math.sin(Date.now() * 0.006) * 4;
+                    }
+
+                    // Pemutakhiran Osilasi Jelly Gelembung
+                    const jellyKey = `${tubeIdx}_${bIdx}`;
+                    if (!ballJellyStates[jellyKey]) {
+                        ballJellyStates[jellyKey] = { scaleX: 1.0, scaleY: 1.0, speedX: 0, speedY: 0, angle: Math.random() * 10 };
+                    }
+                    const jState = ballJellyStates[jellyKey];
+                    jState.angle += 0.05;
+
+                    // Pulihkan bentuk balon jelly secara asimtotik ke rasio normal (1.0)
+                    jState.scaleX += (1.0 - jState.scaleX) * 0.12;
+                    jState.scaleY += (1.0 - jState.scaleY) * 0.12;
+
+                    // Tambahkan efek denyutan mikro agar gelembung terasa hidup
+                    const microPulse = Math.sin(jState.angle) * 0.02;
+
+                    drawRealisticBubble(targetX, targetY, geom.ballRadius, BALL_COLORS[ballId], jState.scaleX + microPulse, jState.scaleY - microPulse);
+                });
+            });
+
+            // 4. Update & Render Gelembung yang Melayang dalam lintasan Parabola
+            animatingBalls.forEach((ab, abIdx) => {
+                ab.progress += ab.speed;
+                if (ab.progress >= 1.0) ab.progress = 1.0;
+
+                // Rumus interpolasi kuadratik Bezier (Parabola)
+                const p0 = { x: ab.startX, y: ab.startY };
+                const p1 = { x: (ab.startX + ab.targetX) / 2, y: Math.min(ab.startY, ab.targetY) - ab.heightArc };
+                const p2 = { x: ab.targetX, y: ab.targetY };
+
+                const u = 1 - ab.progress;
+                const currentX = u * u * p0.x + 2 * u * ab.progress * p1.x + ab.progress * ab.progress * p2.x;
+                const currentY = u * u * p0.y + 2 * u * ab.progress * p1.y + ab.progress * ab.progress * p2.y;
+
+                // Aliran partikel buih ekor gelembung
+                if (Math.random() < 0.5) {
+                    particlesPool.push({
+                        x: currentX + (Math.random() - 0.5) * 8,
+                        y: currentY + (Math.random() - 0.5) * 8,
+                        vx: (Math.random() - 0.5) * 1.2,
+                        vy: Math.random() * 0.6 + 0.2,
+                        color: BALL_COLORS[ab.ballId].main,
+                        r: Math.random() * 2 + 0.5,
+                        alpha: 0.75,
+                        decay: 0.035
+                    });
+                }
+
+                // Efek peregangan (stretch) gelembung di udara tergantung kecepatan laju
+                const stretchFactor = 1.05;
+                const squashFactor = 0.95;
+                drawRealisticBubble(currentX, currentY, ab.ballRadius, BALL_COLORS[ab.ballId], stretchFactor, squashFactor);
+
+                // Ketika gelembung mendarat
+                if (ab.progress >= 1.0) {
+                    tubes[ab.destTubeIdx].push(ab.ballId);
+                    playSound('drop');
+
+                    // Semburan partikel warna mendarat
+                    spawnParticleSplash(ab.targetX, ab.targetY, BALL_COLORS[ab.ballId].main);
+
+                    // Beri efek gepeng (squish) pada gelembung pendarat dan gelembung tepat di bawahnya
+                    const landIdx = tubes[ab.destTubeIdx].length - 1;
+                    const targetJellyKey = `${ab.destTubeIdx}_${landIdx}`;
+                    ballJellyStates[targetJellyKey] = {
+                        scaleX: 1.3, // Gepeng menyamping
+                        scaleY: 0.7, // Memendek ke bawah
+                        speedX: 0,
+                        speedY: 0,
+                        angle: Math.random() * 5
+                    };
+
+                    // Jika ada gelembung di bawahnya, ikut tergoyang
+                    if (landIdx > 0) {
+                        const underJellyKey = `${ab.destTubeIdx}_${landIdx - 1}`;
+                        ballJellyStates[underJellyKey] = {
+                            scaleX: 1.15,
+                            scaleY: 0.85,
+                            speedX: 0,
+                            speedY: 0,
+                            angle: Math.random() * 5
+                        };
+                    }
+
+                    animatingBalls.splice(abIdx, 1);
+                    selectedIdx = null; // Lepas seleksi
+
+                    checkAndProcessWin();
+                }
+            });
+
+            // 5. Update & Render Partikel Ledakan / Semburan
+            for (let i = particlesPool.length - 1; i >= 0; i--) {
+                const p = particlesPool[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.12; // Sedikit gaya gravitasi ke bawah
+                p.alpha -= p.decay;
+
+                if (p.alpha <= 0) {
+                    particlesPool.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, 2 * Math.PI);
+                ctx.fillStyle = p.color;
+                
+                // Beri efek pendar pada partikel
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = p.color;
+                
+                ctx.fill();
+                ctx.restore();
+            }
+
+            requestAnimationFrame(updatePhysicsAndRender);
+        }
+
+        // Fungsi menggambar detail Gelembung Realistis & Indah
+        function drawRealisticBubble(cx, cy, r, colorSchema, scaleX = 1.0, scaleY = 1.0) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.scale(scaleX, scaleY);
+
+            // Cahaya pendaran luar gelembung (outer glow)
+            ctx.shadowBlur = (currentThemeKey === 'cyber') ? 16 : 6;
+            ctx.shadowColor = colorSchema.glow;
+
+            // Gradient bola 3D
+            const bGrad = ctx.createRadialGradient(-r * 0.32, -r * 0.32, r * 0.08, 0, 0, r);
+            bGrad.addColorStop(0, colorSchema.specular);
+            bGrad.addColorStop(0.25, colorSchema.main);
+            bGrad.addColorStop(0.85, colorSchema.dark);
+            bGrad.addColorStop(1, 'rgba(0,0,0,0.45)');
+            
+            ctx.beginPath();
+            ctx.arc(0, 0, r, 0, 2 * Math.PI);
+            ctx.fillStyle = bGrad;
+            ctx.fill();
+
+            // Refleksi mengkilap elips di pojok atas (Specular Glint)
+            if (THEMES[currentThemeKey].bubbleGlint) {
+                ctx.shadowBlur = 0; 
+                ctx.beginPath();
+                ctx.ellipse(-r * 0.35, -r * 0.35, r * 0.22, r * 0.12, Math.PI / 4, 0, 2 * Math.PI);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.68)';
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+    </script>
+
+    <!-- KONTROL SENTUH & KLIK RESPONSIF -->
+    <script>
+        canvas.addEventListener('click', handleBoardTap);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); 
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            
+            const mockClick = {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            };
+            handleBoardTap(mockClick);
+        }, { passive: false });
+
+        function handleBoardTap(event) {
+            if (isComplete || animatingBalls.length > 0) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+
+            // Cari tabung terdekat dari koordinat sentuhan secara akurat
+            let tappedIdx = null;
+            let shortestDistance = 99999;
+
+            for (let i = 0; i < computedTubesCoordinates.length; i++) {
+                const geom = computedTubesCoordinates[i];
+                if (!geom) continue;
+
+                // Buat kotak toleransi ketukan yang luas demi kenyamanan layar sentuh mobile
+                const minX = geom.x - 15;
+                const maxX = geom.x + geom.width + 15;
+                const minY = geom.y - 40; // Area atas tabung dilebihkan agar mudah ditarik
+                const maxY = geom.y + geom.height + 20;
+
+                if (clickX >= minX && clickX <= maxX && clickY >= minY && clickY <= maxY) {
+                    // Cari tabung yang paling lurus secara horizontal dengan titik ketuk
+                    const centerX = geom.x + geom.width / 2;
+                    const dist = Math.abs(clickX - centerX);
+                    if (dist < shortestDistance) {
+                        shortestDistance = dist;
+                        tappedIdx = i;
+                    }
+                }
+            }
+
+            if (tappedIdx === null) return;
+
+            const sourceIdx = selectedIdx;
+
+            if (sourceIdx === null) {
+                // Tahap 1: Pilih gelembung paling atas
+                if (tubes[tappedIdx].length > 0) {
+                    selectedIdx = tappedIdx;
+                    playSound('select');
+                    
+                    // Trigger efek goyang vertikal kecil saat diangkat
+                    const topBallIdx = tubes[tappedIdx].length - 1;
+                    const topBallKey = `${tappedIdx}_${topBallIdx}`;
+                    if (ballJellyStates[topBallKey]) {
+                        ballJellyStates[topBallKey].scaleX = 0.85;
+                        ballJellyStates[topBallKey].scaleY = 1.25;
+                    }
+                } else {
+                    playSound('error');
+                    shakeCanvasContainer();
+                }
+            } 
+            else {
+                // Tahap 2: Pindahkan gelembung yang dipilih
+                if (sourceIdx === tappedIdx) {
+                    // Ketuk tabung yang sama untuk melepas seleksi
+                    selectedIdx = null;
+                    playSound('select');
+                    return;
+                }
+
+                const sTube = tubes[sourceIdx];
+                const dTube = tubes[tappedIdx];
+                const movingBallVal = sTube[sTube.length - 1];
+
+                // Aturan 1: Tabung tujuan penuh
+                if (dTube.length >= CAPACITY) {
+                    playSound('error');
+                    showToastAlert("Tabung tersebut sudah penuh!");
+                    selectedIdx = null;
+                    shakeCanvasContainer();
+                    return;
+                }
+
+                // Aturan 2: Warna gelembung harus cocok atau tabung tujuan kosong
+                if (dTube.length > 0 && dTube[dTube.length - 1] !== movingBallVal) {
+                    playSound('error');
+                    showToastAlert("Warna gelembung tidak serasi!");
+                    selectedIdx = null;
+                    shakeCanvasContainer();
+                    return;
+                }
+
+                // Langkah Valid: Rekam riwayat untuk Undo, lalu terbangkan gelembung
+                recordMoveToHistory();
+                
+                sTube.pop(); 
+                movesCount++;
+                userStats.totalMovesCount++;
+                saveStats();
+
+                // Hitung koordinat penerbangan lintasan melengkung
+                const geomSource = computedTubesCoordinates[sourceIdx];
+                const geomDest = computedTubesCoordinates[tappedIdx];
+
+                const startCoord = {
+                    x: geomSource.x + geomSource.width / 2,
+                    y: geomSource.y - geomSource.ballRadius - 16
+                };
+                
+                const landPosIdx = dTube.length; 
+                const targetCoord = {
+                    x: geomDest.x + geomDest.width / 2,
+                    y: geomDest.y + geomDest.height - (landPosIdx * geomDest.ballRadius * 2.05) - geomDest.ballRadius - 6
+                };
+
+                animatingBalls.push({
+                    sourceTubeIdx: sourceIdx,
+                    destTubeIdx: tappedIdx,
+                    ballLocalIdx: landPosIdx,
+                    startX: startCoord.x,
+                    startY: startCoord.y,
+                    targetX: targetCoord.x,
+                    targetY: targetCoord.y,
+                    ballId: movingBallVal,
+                    ballRadius: geomDest.ballRadius,
+                    progress: 0,
+                    speed: 0.055, // Kecepatan luncuran
+                    heightArc: Math.max(90, Math.abs(startCoord.x - targetCoord.x) * 0.45)
+                });
+
+                updateHUD();
+            }
+        }
+
+        function shakeCanvasContainer() {
+            const el = document.getElementById('board-container');
+            el.classList.add('shake-element');
+            setTimeout(() => {
+                el.classList.remove('shake-element');
+            }, 350);
+        }
+    </script>
+
+    <!-- SISTEM PANEL KONTROL KENDALI & LOGIKA GAME -->
+    <script>
+        const toast = document.getElementById('custom-toast');
+        const toastMsg = document.getElementById('toast-message');
+
+        function showToastAlert(message) {
+            toastMsg.innerText = message;
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 2500);
+        }
+
+        function recordMoveToHistory() {
+            moveHistory.push(JSON.stringify(tubes));
+            if (moveHistory.length > 40) moveHistory.shift(); 
+        }
+
+        function triggerUndoAction() {
+            if (moveHistory.length === 0 || isComplete) {
+                playSound('error');
+                return;
+            }
+            userStats.undoUsedThisLevel = true;
+            saveStats();
+
+            const oldState = moveHistory.pop();
+            tubes = JSON.parse(oldState);
+            selectedIdx = null;
+            movesCount++;
+            playSound('select');
+            updateHUD();
+        }
+
+        function triggerLifelineAddTube() {
+            if (tubes.length >= 8 || extraTubeAdded) {
+                playSound('error');
+                showToastAlert("Maksimal tabung tambahan telah dicapai!");
+                return;
+            }
+
+            recordMoveToHistory();
+            tubes.push([]);
+            extraTubeAdded = true;
+            document.getElementById('btn-add-tube').disabled = true;
+            
+            playSound('drop');
+            layoutTubesGrid();
+        }
+
+        function checkAndProcessWin() {
+            const isWon = verifyBoardSolved(tubes);
+            if (isWon) {
+                isComplete = true;
+                playSound('victory');
+
+                // Pemeriksaan Prestasi (Achievements)
+                unlockAchievement('FIRST_WIN');
+                if (movesCount < 12) unlockAchievement('SPEED_RUN');
+                if (!userStats.undoUsedThisLevel) unlockAchievement('NO_UNDO');
+                if (currentLevel >= 10) unlockAchievement('LEVEL_10');
+
+                // Kalkulasi Rekor Terbaik
+                const optimalCheck = bestScorePerLevel[currentLevel];
+                if (!optimalCheck || movesCount < optimalCheck) {
+                    bestScorePerLevel[currentLevel] = movesCount;
+                    localStorage.setItem('bubble_sort_premium_bests', JSON.stringify(bestScorePerLevel));
+                }
+
+                // Beri Skor Tambahan
+                const scoreAwarded = Math.max(50, 200 - (movesCount * 5));
+                gameScore += scoreAwarded;
+                userStats.score = gameScore;
+                userStats.levelsWon++;
+                saveStats();
+
+                // Sistem Penilaian Bintang
+                const starsContainer = document.getElementById('win-stars-container');
+                starsContainer.innerHTML = '';
+                let starCount = 3;
+                if (movesCount > 24) starCount = 2;
+                if (movesCount > 38) starCount = 1;
+
+                for (let s = 0; s < 3; s++) {
+                    if (s < starCount) {
+                        starsContainer.innerHTML += '<i class="fa-solid fa-star animate-pulse mx-0.5"></i>';
+                    } else {
+                        starsContainer.innerHTML += '<i class="fa-regular fa-star opacity-30 mx-0.5"></i>';
+                    }
+                }
+
+                // Tampilkan Popup Kemenangan
+                setTimeout(() => {
+                    document.getElementById('win-lvl').innerText = currentLevel + 1;
+                    document.getElementById('win-moves-info').innerText = movesCount;
+                    document.getElementById('win-score').innerText = gameScore;
+                    document.getElementById('screen-win').classList.remove('hidden');
+                }, 800);
+            }
+        }
+
+        function startLevelIndex(lvl) {
+            currentLevel = lvl;
+            movesCount = 0;
+            selectedIdx = null;
+            moveHistory = [];
+            isComplete = false;
+            extraTubeAdded = false;
+            userStats.undoUsedThisLevel = false;
+            saveStats();
+
+            document.getElementById('btn-add-tube').disabled = false;
+            document.getElementById('screen-win').classList.add('hidden');
+
+            tubes = buildSolvableLevel(lvl);
+            originalStartingTubes = JSON.parse(JSON.stringify(tubes));
+
+            // Bersihkan keadaan jelly
+            ballJellyStates = {};
+
+            layoutTubesGrid();
+            updateHUD();
+        }
+
+        function updateHUD() {
+            document.getElementById('stat-level').innerText = currentLevel;
+            document.getElementById('stat-score').innerText = gameScore;
+            document.getElementById('stat-moves').innerText = movesCount;
+            
+            const best = bestScorePerLevel[currentLevel];
+            document.getElementById('stat-best').innerText = best ? best : '-';
+
+            document.getElementById('btn-undo').disabled = (moveHistory.length === 0);
+        }
+    </script>
+
+    <!-- BINDING EVENT TOMBOL UI -->
+    <script>
+        const screenWelcome = document.getElementById('screen-welcome');
+        const welcomeDisplay = document.getElementById('welcome-level-display');
+
+        let welcomeLvlSelect = parseInt(localStorage.getItem('bubble_sort_premium_last_lvl')) || 1;
+        welcomeDisplay.innerText = welcomeLvlSelect;
+
+        // Pilih Level Awal
+        document.getElementById('btn-welcome-inc').addEventListener('click', () => {
+            if (welcomeLvlSelect < 99) {
+                welcomeLvlSelect++;
+                welcomeDisplay.innerText = welcomeLvlSelect;
+                playSound('select');
+            }
+        });
+        document.getElementById('btn-welcome-dec').addEventListener('click', () => {
+            if (welcomeLvlSelect > 1) {
+                welcomeLvlSelect--;
+                welcomeDisplay.innerText = welcomeLvlSelect;
+                playSound('select');
+            }
+        });
+
+        // Mainkan Permainan
+        document.getElementById('btn-play').addEventListener('click', () => {
+            screenWelcome.classList.add('hidden');
+            localStorage.setItem('bubble_sort_premium_last_lvl', welcomeLvlSelect);
+            
+            isMusicMuted = false;
+            updateMusicUI();
+            startAmbientMusic();
+
+            startLevelIndex(welcomeLvlSelect);
+        });
+
+        // Kontrol Aksi Permainan
+        document.getElementById('btn-undo').addEventListener('click', triggerUndoAction);
+        document.getElementById('btn-add-tube').addEventListener('click', triggerLifelineAddTube);
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            recordMoveToHistory();
+            tubes = JSON.parse(JSON.stringify(originalStartingTubes));
+            selectedIdx = null;
+            movesCount = 0;
+            extraTubeAdded = false;
+            document.getElementById('btn-add-tube').disabled = false;
+            playSound('select');
+            
+            ballJellyStates = {};
+            layoutTubesGrid();
+            updateHUD();
+        });
+
+        // Switch Suara Efek
+        document.getElementById('btn-sound-toggle').addEventListener('click', () => {
+            isSoundMuted = !isSoundMuted;
+            const icon = document.getElementById('sound-icon');
+            icon.className = isSoundMuted ? 'fa-solid fa-volume-xmark text-red-400' : 'fa-solid fa-volume-high';
+            if (!isSoundMuted) playSound('select');
+        });
+
+        // Switch Musik Latar
+        document.getElementById('btn-music-toggle').addEventListener('click', () => {
+            isMusicMuted = !isMusicMuted;
+            updateMusicUI();
+            if (!isMusicMuted) {
+                startAmbientMusic();
+            } else {
+                stopAmbientMusic();
+            }
+        });
+
+        function updateMusicUI() {
+            const icon = document.getElementById('music-icon');
+            if (isMusicMuted) {
+                icon.className = 'fa-solid fa-music text-slate-500 opacity-55';
+            } else {
+                icon.className = 'fa-solid fa-music text-teal-400';
+            }
+        }
+
+        // Modal Pilihan Tema
+        const modalThemes = document.getElementById('modal-themes');
+        document.getElementById('btn-theme-menu').addEventListener('click', () => {
+            modalThemes.classList.remove('hidden');
+            playSound('select');
+        });
+        document.getElementById('btn-close-themes').addEventListener('click', () => {
+            modalThemes.classList.add('hidden');
+        });
+
+        document.querySelectorAll('.theme-option-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const themeKey = btn.getAttribute('data-theme');
+                currentThemeKey = themeKey;
+                playSound('drop');
+                unlockAchievement('THEME_EXPLORER');
+
+                document.body.style.background = THEMES[themeKey].bg;
+
+                document.querySelectorAll('.theme-option-btn').forEach(b => {
+                    b.classList.remove('border-white/25');
+                    b.classList.add('border-white/10');
+                });
+                btn.classList.add('border-white/25');
+
+                modalThemes.classList.add('hidden');
+            });
+        });
+
+        // Modal Panduan Bermain
+        const modalGuide = document.getElementById('modal-guide');
+        document.getElementById('btn-help').addEventListener('click', () => {
+            modalGuide.classList.remove('hidden');
+            playSound('select');
+        });
+        document.getElementById('btn-close-guide').addEventListener('click', () => {
+            modalGuide.classList.add('hidden');
+        });
+
+        // Modal Daftar Prestasi
+        const modalAchievements = document.getElementById('modal-achievements');
+        document.getElementById('btn-achievements').addEventListener('click', () => {
+            renderAchievementsList();
+            modalAchievements.classList.remove('hidden');
+            playSound('select');
+        });
+        document.getElementById('btn-close-achievements').addEventListener('click', () => {
+            modalAchievements.classList.add('hidden');
+        });
+
+        // Kontrol Tombol Kemenangan
+        document.getElementById('btn-next-level').addEventListener('click', () => {
+            startLevelIndex(currentLevel + 1);
+        });
+        document.getElementById('btn-win-restart').addEventListener('click', () => {
+            startLevelIndex(currentLevel);
+        });
+        document.getElementById('btn-win-home').addEventListener('click', () => {
+            document.getElementById('screen-win').classList.add('hidden');
+            screenWelcome.classList.remove('hidden');
+            welcomeLvlSelect = currentLevel;
+            welcomeDisplay.innerText = welcomeLvlSelect;
+        });
+
+        // Penskalaan Ulang Layar Adaptif
+        window.addEventListener('resize', () => {
+            handleCanvasScaling();
+        });
+
+        // Inisialisasi awal saat dimuat
+        window.onload = function() {
+            handleCanvasScaling();
+            updatePhysicsAndRender();
+        };
+    </script>
+</body>
+</html>
